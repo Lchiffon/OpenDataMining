@@ -1,0 +1,77 @@
+---
+title: "R中的向量化运算"
+author: "Louis"
+date: "Friday, May 08, 2015"
+output: html_document
+---
+
+### R语言中的向量化运算
+
+    我们主要通过iris数据集介绍R语言中的向量化运算
+```{r}
+str(iris)
+```
+---
+
+## apply
+    **apply**通过对数组或者矩阵的一个维度使用函数生成值得到列表或者数组、向量。
+```{r,echo=FALSE}
+str(apply)
+```
+   例如我们想知道iris数据集前四列的均值：
+```{r}
+apply(iris[1:4],2,mean)
+```
+---
+
+   或者我们想知道某一行的最大值
+```{r}
+apply(iris[1:4], 1, max)
+```
+---
+
+## lapply 和 sapply
+   **lapply**和**sapply**通过对x的每一个元素运用函数，生成一个与元素个数相同的值列表，这里的x可以为向量，矩阵或者数据框，**sapply**是**lapply**的用户友好版本，lapply返回的是一个列表的形式，而sapply返回的一个数据框的形式
+   例如我们想知道iris每个元素的种类
+```{r}
+lapply(iris,class)
+sapply(iris,class)
+```
+  我们也可以用sapply算出每一列的均值
+```{r}
+sapply(iris,mean)
+```
+---
+
+## tapply(与aggregate作比较)
+  **tapply**对一组非空值(典型的是一个向量)按照一组确定因子进行相应计算
+  例如我们想知道对于不同的Species，Sepal.Width的均值和方差
+```{r}
+tapply(iris$Sepal.Width,INDEX=iris$Species,FUN=mean)
+tapply(iris$Sepal.Width,INDEX=iris$Species,FUN=sd)
+```
+  这里我们介绍一下*aggregate*函数，**aggregate**函数是数据整合的重要函数，它可以按照一组确定的因子对一个数据框进行相应的计算。
+```{r}
+aggregate(iris[1:4],by=list(a=iris$Species),mean)
+```
+---
+
+## mapply
+mapply是sapply的多变量版本。将对...中的每个参数运行FUN函数，如有必要，参数将被循环
+```{r,echo=FALSE}
+str(mapply)
+```
+简单的举一个例子
+```{r}
+mapply(rep,1:3,3:1)
+```
+---
+
+## vapply
+vapply类似于sapply函数，但是它的返回值有预定义类型，所以它使用起来会更加安全，有的时候会更快.
+在vapply函数中总是会进行简化，vapply会检测FUN的所有值是否与FUN.VALUE兼容，以使他们具有相同的长度和类型。类型顺序：逻辑<</span>整型<</span>实数<</span>复数
+```{r}
+ x<-data.frame(a=rnorm(4,4,4),b=rnorm(4,5,3),c=rnorm(4,5,3))
+ vapply(x,mean,c(c=0))
+```
+
